@@ -14,16 +14,214 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      agents: {
+        Row: {
+          created_at: string
+          description: string | null
+          first_message: string
+          id: string
+          is_active: boolean
+          knowledge_base: string | null
+          language: string
+          llm_model: string
+          max_call_duration: number
+          name: string
+          system_prompt: string
+          temperature: number
+          updated_at: string
+          user_id: string
+          voice: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          first_message?: string
+          id?: string
+          is_active?: boolean
+          knowledge_base?: string | null
+          language?: string
+          llm_model?: string
+          max_call_duration?: number
+          name: string
+          system_prompt?: string
+          temperature?: number
+          updated_at?: string
+          user_id: string
+          voice?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          first_message?: string
+          id?: string
+          is_active?: boolean
+          knowledge_base?: string | null
+          language?: string
+          llm_model?: string
+          max_call_duration?: number
+          name?: string
+          system_prompt?: string
+          temperature?: number
+          updated_at?: string
+          user_id?: string
+          voice?: string
+        }
+        Relationships: []
+      }
+      call_transcripts: {
+        Row: {
+          call_id: string
+          content: string
+          created_at: string
+          id: string
+          role: string
+        }
+        Insert: {
+          call_id: string
+          content: string
+          created_at?: string
+          id?: string
+          role: string
+        }
+        Update: {
+          call_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_transcripts_call_id_fkey"
+            columns: ["call_id"]
+            isOneToOne: false
+            referencedRelation: "calls"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      calls: {
+        Row: {
+          agent_id: string
+          caller_number: string | null
+          cost_credits: number
+          created_at: string
+          direction: string
+          duration_seconds: number
+          ended_at: string | null
+          id: string
+          started_at: string
+          status: string
+          summary: string | null
+          user_id: string
+        }
+        Insert: {
+          agent_id: string
+          caller_number?: string | null
+          cost_credits?: number
+          created_at?: string
+          direction?: string
+          duration_seconds?: number
+          ended_at?: string | null
+          id?: string
+          started_at?: string
+          status?: string
+          summary?: string | null
+          user_id: string
+        }
+        Update: {
+          agent_id?: string
+          caller_number?: string | null
+          cost_credits?: number
+          created_at?: string
+          direction?: string
+          duration_seconds?: number
+          ended_at?: string | null
+          id?: string
+          started_at?: string
+          status?: string
+          summary?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calls_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          company: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          company?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          company?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +348,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
