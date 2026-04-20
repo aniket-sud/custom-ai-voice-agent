@@ -2,104 +2,127 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* VoiceAI Design System — dark, premium, Bolna-inspired */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 240 20% 4%;
+    --foreground: 240 10% 96%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 240 18% 7%;
+    --card-foreground: 240 10% 96%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 240 18% 7%;
+    --popover-foreground: 240 10% 96%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 270 95% 65%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 285 100% 70%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 240 15% 12%;
+    --secondary-foreground: 240 10% 96%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 240 12% 14%;
+    --muted-foreground: 240 6% 65%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 195 100% 60%;
+    --accent-foreground: 240 20% 4%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --success: 142 70% 45%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 55%;
+    --warning-foreground: 240 20% 4%;
 
-    --radius: 0.5rem;
+    --border: 240 12% 16%;
+    --input: 240 12% 14%;
+    --ring: 270 95% 65%;
 
-    --sidebar-background: 0 0% 98%;
+    --radius: 0.75rem;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-background: 240 22% 5%;
+    --sidebar-foreground: 240 10% 90%;
+    --sidebar-primary: 270 95% 65%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 15% 11%;
+    --sidebar-accent-foreground: 240 10% 96%;
+    --sidebar-border: 240 12% 14%;
+    --sidebar-ring: 270 95% 65%;
 
-    --sidebar-primary: 240 5.9% 10%;
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(270 95% 65%), hsl(285 100% 70%));
+    --gradient-accent: linear-gradient(135deg, hsl(270 95% 65%), hsl(195 100% 60%));
+    --gradient-hero: radial-gradient(ellipse 80% 60% at 50% 0%, hsl(270 95% 30% / 0.4), transparent 70%),
+                     radial-gradient(ellipse 60% 50% at 80% 30%, hsl(195 100% 30% / 0.3), transparent 70%),
+                     hsl(240 20% 4%);
+    --gradient-card: linear-gradient(180deg, hsl(240 18% 9%), hsl(240 18% 6%));
 
-    --sidebar-primary-foreground: 0 0% 98%;
+    /* Shadows */
+    --shadow-glow: 0 0 60px hsl(270 95% 65% / 0.35);
+    --shadow-card: 0 8px 32px -8px hsl(240 30% 0% / 0.5);
+    --shadow-elegant: 0 20px 60px -20px hsl(270 95% 50% / 0.4);
 
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Motion */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+  .light {
+    --background: 0 0% 100%;
+    --foreground: 240 20% 8%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 20% 8%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 20% 8%;
+    --primary: 270 95% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 10% 96%;
+    --secondary-foreground: 240 20% 8%;
+    --muted: 240 10% 95%;
+    --muted-foreground: 240 6% 40%;
+    --accent: 195 100% 45%;
+    --accent-foreground: 0 0% 100%;
+    --border: 240 10% 90%;
+    --input: 240 10% 92%;
+    --ring: 270 95% 55%;
   }
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-
+  * { @apply border-border; }
+  html, body, #root { @apply min-h-screen; }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
+}
+
+@layer utilities {
+  .bg-gradient-primary { background: var(--gradient-primary); }
+  .bg-gradient-accent { background: var(--gradient-accent); }
+  .bg-gradient-hero { background: var(--gradient-hero); }
+  .bg-gradient-card { background: var(--gradient-card); }
+  .text-gradient-primary {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .shadow-glow { box-shadow: var(--shadow-glow); }
+  .shadow-elegant { box-shadow: var(--shadow-elegant); }
+  .transition-smooth { transition: var(--transition-smooth); }
+
+  @keyframes pulse-ring {
+    0% { transform: scale(0.95); opacity: 0.7; }
+    50% { transform: scale(1.1); opacity: 0.3; }
+    100% { transform: scale(0.95); opacity: 0.7; }
+  }
+  .animate-pulse-ring { animation: pulse-ring 2s ease-in-out infinite; }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  .animate-float { animation: float 4s ease-in-out infinite; }
 }
