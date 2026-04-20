@@ -69,7 +69,7 @@ export default function AgentEditor() {
     setSaving(true);
     const payload = { ...parsed.data, user_id: user.id };
     if (isNew) {
-      const { data, error } = await supabase.from("agents").insert(payload).select().single();
+      const { data, error } = await supabase.from("agents").insert(payload as any).select().single();
       setSaving(false);
       if (error) return toast.error(error.message);
       toast.success("Agent created");
