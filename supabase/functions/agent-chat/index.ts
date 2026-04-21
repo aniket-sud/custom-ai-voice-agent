@@ -40,7 +40,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Fetch agent (RLS ensures user owns it)
     const { data: agent, error: agentErr } = await supabase
       .from("agents").select("*").eq("id", agent_id).single();
     if (agentErr || !agent) {
@@ -49,47 +48,93 @@ Deno.serve(async (req) => {
       });
     }
 
+    const today = new Date().toISOString().split("T")[0];
     const systemContent = [
       agent.system_prompt,
       "",
-      "IMPORTANT: You are speaking on a voice call. Keep responses very short (1-2 sentences), natural, conversational. Avoid bullet points, markdown, or long explanations. Sound human.",
+      `Today's date is ${today}. You have access to a web_search tool — use it whenever the user asks about current events, news, prices, weather, sports scores, recent updates, "latest" anything, or any fact that could have changed after your training. Never claim you "don't have real-time data" — call web_search instead.`,
+      "",
+      "VOICE STYLE: You are speaking on a voice call. Keep responses very short (1-2 sentences), natural, conversational. No bullet points, no markdown, no long explanations. Sound human.",
       agent.knowledge_base ? `\n\nKnowledge base:\n${agent.knowledge_base}` : "",
     ].join("\n").trim();
 
-    const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
+    // Tool definition for web search (model decides when to call)
+    const tools = [{
+      type: "function",
+      function: {
+        name: "web_search",
+        description: "Search the web for current/real-time information. Use for news, prices, weather, sports, recent events, or anything that may have changed.",
+        parameters: {
+          type: "object",
+          properties: { query: { type: "string", description: "Search query in English" } },
+          required: ["query"],
+          additionalProperties: false,
+        },
       },
-      body: JSON.stringify({
-        model: agent.llm_model || "google/gemini-3-flash-preview",
-        messages: [{ role: "system", content: systemContent }, ...messages],
-        temperature: Number(agent.temperature) || 0.7,
-      }),
-    });
+    }];
+
+    const baseBody = {
+      model: agent.llm_model || "google/gemini-3-flash-preview",
+      messages: [{ role: "system", content: systemContent }, ...messages],
+      temperature: Number(agent.temperature) || 0.7,
+      tools,
+    };
+
+    const callAI = async (body: any) => {
+      const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      return r;
+    };
+
+    const webSearch = async (query: string): Promise<string> => {
+      try {
+        const r = await fetch(`https://r.jina.ai/https://www.google.com/search?q=${encodeURIComponent(query)}`, {
+          headers: { "Accept": "text/plain", "X-Return-Format": "text" },
+        });
+        if (!r.ok) return "Search unavailable.";
+        const text = await r.text();
+        return text.slice(0, 4000);
+      } catch (e) {
+        console.error("web_search error", e);
+        return "Search failed.";
+      }
+    };
+
+    let aiResp = await callAI(baseBody);
 
     if (!aiResp.ok) {
       const t = await aiResp.text();
       console.error("AI gateway error", aiResp.status, t);
-      if (aiResp.status === 429) {
-        return new Response(JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }), {
-          status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      if (aiResp.status === 402) {
-        return new Response(JSON.stringify({ error: "AI credits exhausted. Add credits in Lovable Cloud settings." }), {
-          status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      return new Response(JSON.stringify({ error: "AI service error" }), {
-        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      if (aiResp.status === 429) return new Response(JSON.stringify({ error: "Rate limit exceeded. Try again shortly." }), { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      if (aiResp.status === 402) return new Response(JSON.stringify({ error: "AI credits exhausted." }), { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ error: "AI service error" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    const data = await aiResp.json();
-    const reply = data.choices?.[0]?.message?.content || "I didn't catch that.";
+    let data = await aiResp.json();
+    let msg = data.choices?.[0]?.message;
 
+    // Tool-call loop (max 3 iterations)
+    let convo = [...baseBody.messages];
+    for (let i = 0; i < 3 && msg?.tool_calls?.length; i++) {
+      convo.push(msg);
+      for (const tc of msg.tool_calls) {
+        if (tc.function?.name === "web_search") {
+          let args: any = {};
+          try { args = JSON.parse(tc.function.arguments || "{}"); } catch {}
+          const result = await webSearch(args.query || "");
+          convo.push({ role: "tool", tool_call_id: tc.id, content: result });
+        }
+      }
+      aiResp = await callAI({ ...baseBody, messages: convo });
+      if (!aiResp.ok) break;
+      data = await aiResp.json();
+      msg = data.choices?.[0]?.message;
+    }
+
+    const reply = msg?.content || "I didn't catch that.";
     return new Response(JSON.stringify({ reply }), {
       status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
