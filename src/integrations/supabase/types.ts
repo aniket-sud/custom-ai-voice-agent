@@ -14,6 +14,95 @@ export type Database = {
   }
   public: {
     Tables: {
+      agent_pages: {
+        Row: {
+          accent_color: string
+          agent_id: string
+          allow_browser_call: boolean
+          allow_phone_callback: boolean
+          background_style: string
+          call_count: number
+          collect_email: boolean
+          cover_image_url: string | null
+          created_at: string
+          cta_label: string
+          custom_domain: string | null
+          faqs: Json | null
+          features: Json | null
+          hero_text: string | null
+          id: string
+          logo_url: string | null
+          primary_color: string
+          slug: string
+          subtitle: string | null
+          title: string
+          updated_at: string
+          user_id: string
+          view_count: number
+          visibility: string
+        }
+        Insert: {
+          accent_color?: string
+          agent_id: string
+          allow_browser_call?: boolean
+          allow_phone_callback?: boolean
+          background_style?: string
+          call_count?: number
+          collect_email?: boolean
+          cover_image_url?: string | null
+          created_at?: string
+          cta_label?: string
+          custom_domain?: string | null
+          faqs?: Json | null
+          features?: Json | null
+          hero_text?: string | null
+          id?: string
+          logo_url?: string | null
+          primary_color?: string
+          slug: string
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+          user_id: string
+          view_count?: number
+          visibility?: string
+        }
+        Update: {
+          accent_color?: string
+          agent_id?: string
+          allow_browser_call?: boolean
+          allow_phone_callback?: boolean
+          background_style?: string
+          call_count?: number
+          collect_email?: boolean
+          cover_image_url?: string | null
+          created_at?: string
+          cta_label?: string
+          custom_domain?: string | null
+          faqs?: Json | null
+          features?: Json | null
+          hero_text?: string | null
+          id?: string
+          logo_url?: string | null
+          primary_color?: string
+          slug?: string
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+          view_count?: number
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_pages_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: true
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       agents: {
         Row: {
           created_at: string
@@ -26,6 +115,8 @@ export type Database = {
           llm_model: string
           max_call_duration: number
           name: string
+          share_enabled: boolean
+          slug: string | null
           system_prompt: string
           temperature: number
           updated_at: string
@@ -43,6 +134,8 @@ export type Database = {
           llm_model?: string
           max_call_duration?: number
           name: string
+          share_enabled?: boolean
+          slug?: string | null
           system_prompt?: string
           temperature?: number
           updated_at?: string
@@ -60,6 +153,8 @@ export type Database = {
           llm_model?: string
           max_call_duration?: number
           name?: string
+          share_enabled?: boolean
+          slug?: string | null
           system_prompt?: string
           temperature?: number
           updated_at?: string
@@ -67,6 +162,47 @@ export type Database = {
           voice?: string
         }
         Relationships: []
+      }
+      call_recordings: {
+        Row: {
+          call_id: string
+          created_at: string
+          duration_seconds: number | null
+          format: string | null
+          id: string
+          recording_url: string
+          size_bytes: number | null
+          user_id: string
+        }
+        Insert: {
+          call_id: string
+          created_at?: string
+          duration_seconds?: number | null
+          format?: string | null
+          id?: string
+          recording_url: string
+          size_bytes?: number | null
+          user_id: string
+        }
+        Update: {
+          call_id?: string
+          created_at?: string
+          duration_seconds?: number | null
+          format?: string | null
+          id?: string
+          recording_url?: string
+          size_bytes?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_recordings_call_id_fkey"
+            columns: ["call_id"]
+            isOneToOne: false
+            referencedRelation: "calls"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       call_transcripts: {
         Row: {
@@ -104,43 +240,58 @@ export type Database = {
         Row: {
           agent_id: string
           caller_number: string | null
+          campaign_id: string | null
           cost_credits: number
           created_at: string
           direction: string
           duration_seconds: number
           ended_at: string | null
+          from_number: string | null
           id: string
+          plivo_call_uuid: string | null
+          recording_url: string | null
           started_at: string
           status: string
           summary: string | null
+          to_number: string | null
           user_id: string
         }
         Insert: {
           agent_id: string
           caller_number?: string | null
+          campaign_id?: string | null
           cost_credits?: number
           created_at?: string
           direction?: string
           duration_seconds?: number
           ended_at?: string | null
+          from_number?: string | null
           id?: string
+          plivo_call_uuid?: string | null
+          recording_url?: string | null
           started_at?: string
           status?: string
           summary?: string | null
+          to_number?: string | null
           user_id: string
         }
         Update: {
           agent_id?: string
           caller_number?: string | null
+          campaign_id?: string | null
           cost_credits?: number
           created_at?: string
           direction?: string
           duration_seconds?: number
           ended_at?: string | null
+          from_number?: string | null
           id?: string
+          plivo_call_uuid?: string | null
+          recording_url?: string | null
           started_at?: string
           status?: string
           summary?: string | null
+          to_number?: string | null
           user_id?: string
         }
         Relationships: [
@@ -153,14 +304,321 @@ export type Database = {
           },
         ]
       }
+      campaign_contacts: {
+        Row: {
+          attempts: number
+          call_id: string | null
+          called_at: string | null
+          campaign_id: string
+          created_at: string
+          id: string
+          last_error: string | null
+          name: string | null
+          phone: string
+          status: string
+          variables: Json | null
+        }
+        Insert: {
+          attempts?: number
+          call_id?: string | null
+          called_at?: string | null
+          campaign_id: string
+          created_at?: string
+          id?: string
+          last_error?: string | null
+          name?: string | null
+          phone: string
+          status?: string
+          variables?: Json | null
+        }
+        Update: {
+          attempts?: number
+          call_id?: string | null
+          called_at?: string | null
+          campaign_id?: string
+          created_at?: string
+          id?: string
+          last_error?: string | null
+          name?: string | null
+          phone?: string
+          status?: string
+          variables?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_contacts_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaigns: {
+        Row: {
+          agent_id: string
+          completed_at: string | null
+          completed_contacts: number
+          concurrency: number
+          created_at: string
+          description: string | null
+          failed_contacts: number
+          from_number: string
+          id: string
+          name: string
+          retry_count: number
+          scheduled_at: string | null
+          started_at: string | null
+          status: string
+          total_contacts: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          agent_id: string
+          completed_at?: string | null
+          completed_contacts?: number
+          concurrency?: number
+          created_at?: string
+          description?: string | null
+          failed_contacts?: number
+          from_number: string
+          id?: string
+          name: string
+          retry_count?: number
+          scheduled_at?: string | null
+          started_at?: string | null
+          status?: string
+          total_contacts?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          agent_id?: string
+          completed_at?: string | null
+          completed_contacts?: number
+          concurrency?: number
+          created_at?: string
+          description?: string | null
+          failed_contacts?: number
+          from_number?: string
+          id?: string
+          name?: string
+          retry_count?: number
+          scheduled_at?: string | null
+          started_at?: string | null
+          status?: string
+          total_contacts?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaigns_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      credits_ledger: {
+        Row: {
+          amount: number
+          balance_after: number
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          metadata: Json | null
+          reference_id: string | null
+          reference_type: string | null
+          type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          balance_after: number
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          reference_id?: string | null
+          reference_type?: string | null
+          type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          balance_after?: number
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          reference_id?: string | null
+          reference_type?: string | null
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      page_leads: {
+        Row: {
+          agent_id: string
+          agent_page_id: string
+          call_id: string | null
+          created_at: string
+          email: string | null
+          id: string
+          message: string | null
+          name: string | null
+          phone: string
+          source_ip: string | null
+          status: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          agent_id: string
+          agent_page_id: string
+          call_id?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          message?: string | null
+          name?: string | null
+          phone: string
+          source_ip?: string | null
+          status?: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          agent_id?: string
+          agent_page_id?: string
+          call_id?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          message?: string | null
+          name?: string | null
+          phone?: string
+          source_ip?: string | null
+          status?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "page_leads_agent_page_id_fkey"
+            columns: ["agent_page_id"]
+            isOneToOne: false
+            referencedRelation: "agent_pages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      phone_numbers: {
+        Row: {
+          agent_id: string | null
+          capabilities: Json | null
+          country: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          monthly_rent: number | null
+          number: string
+          source: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          agent_id?: string | null
+          capabilities?: Json | null
+          country?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          monthly_rent?: number | null
+          number: string
+          source?: string
+          type?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          agent_id?: string | null
+          capabilities?: Json | null
+          country?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          monthly_rent?: number | null
+          number?: string
+          source?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "phone_numbers_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plivo_credentials: {
+        Row: {
+          auth_id: string
+          auth_token_encrypted: string
+          created_at: string
+          id: string
+          is_verified: boolean
+          last_verified_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          auth_id: string
+          auth_token_encrypted: string
+          created_at?: string
+          id?: string
+          is_verified?: boolean
+          last_verified_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          auth_id?: string
+          auth_token_encrypted?: string
+          created_at?: string
+          id?: string
+          is_verified?: boolean
+          last_verified_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
           company: string | null
           created_at: string
+          credits_balance: number
+          credits_total_purchased: number
+          credits_total_used: number
           email: string | null
           full_name: string | null
           id: string
+          phone: string | null
+          plivo_connected: boolean
           updated_at: string
           user_id: string
         }
@@ -168,9 +626,14 @@ export type Database = {
           avatar_url?: string | null
           company?: string | null
           created_at?: string
+          credits_balance?: number
+          credits_total_purchased?: number
+          credits_total_used?: number
           email?: string | null
           full_name?: string | null
           id?: string
+          phone?: string | null
+          plivo_connected?: boolean
           updated_at?: string
           user_id: string
         }
@@ -178,13 +641,71 @@ export type Database = {
           avatar_url?: string | null
           company?: string | null
           created_at?: string
+          credits_balance?: number
+          credits_total_purchased?: number
+          credits_total_used?: number
           email?: string | null
           full_name?: string | null
           id?: string
+          phone?: string | null
+          plivo_connected?: boolean
           updated_at?: string
           user_id?: string
         }
         Relationships: []
+      }
+      scheduled_calls: {
+        Row: {
+          agent_id: string
+          call_id: string | null
+          contact_name: string | null
+          created_at: string
+          from_number: string
+          id: string
+          notes: string | null
+          scheduled_for: string
+          status: string
+          to_number: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          agent_id: string
+          call_id?: string | null
+          contact_name?: string | null
+          created_at?: string
+          from_number: string
+          id?: string
+          notes?: string | null
+          scheduled_for: string
+          status?: string
+          to_number: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          agent_id?: string
+          call_id?: string | null
+          contact_name?: string | null
+          created_at?: string
+          from_number?: string
+          id?: string
+          notes?: string | null
+          scheduled_for?: string
+          status?: string
+          to_number?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scheduled_calls_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -212,6 +733,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      adjust_credits: {
+        Args: {
+          p_amount: number
+          p_description?: string
+          p_reference_id?: string
+          p_reference_type?: string
+          p_type: string
+          p_user_id: string
+        }
+        Returns: number
+      }
+      generate_agent_slug: { Args: { p_base: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
