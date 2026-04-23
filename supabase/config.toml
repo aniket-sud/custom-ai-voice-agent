@@ -1,1 +1,16 @@
 project_id = "pfbdbfoiqrutvzskzory"
+
+[functions.plivo-webhook]
+verify_jwt = false
+
+[functions.plivo-turn]
+verify_jwt = false
+
+[functions.page-callback]
+verify_jwt = false
+
+[functions.setup-admin]
+verify_jwt = false
+
+[functions.voice-stt]
+verify_jwt = false
