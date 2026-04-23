@@ -4,7 +4,7 @@ import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu,
   SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger, SidebarHeader, SidebarFooter,
 } from "@/components/ui/sidebar";
-import { LayoutDashboard, Users, Bot, PhoneCall, LogOut, ShieldCheck } from "lucide-react";
+import { LayoutDashboard, Users, Bot, PhoneCall, LogOut, ShieldCheck, Megaphone, Wallet } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +15,8 @@ const items = [
   { title: "Users", url: "/admin/users", icon: Users, end: false },
   { title: "Agents", url: "/admin/agents", icon: Bot, end: false },
   { title: "Calls", url: "/admin/calls", icon: PhoneCall, end: false },
+  { title: "Campaigns", url: "/admin/campaigns", icon: Megaphone, end: false },
+  { title: "Revenue", url: "/admin/revenue", icon: Wallet, end: false },
 ];
 
 function AdminSidebar() {
@@ -24,9 +26,7 @@ function AdminSidebar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-b border-sidebar-border">
-        <div className="px-2 py-2 flex items-center gap-2">
-          <Logo size="sm" />
-        </div>
+        <div className="px-2 py-2 flex items-center gap-2"><Logo size="sm" /></div>
         <Badge variant="outline" className="mx-2 mb-1 text-primary border-primary/40 w-fit"><ShieldCheck className="h-3 w-3" /> Admin</Badge>
       </SidebarHeader>
       <SidebarContent>
